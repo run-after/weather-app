@@ -1,16 +1,29 @@
 const input = document.querySelector('input');
 const submit = document.querySelector('button');
-const img = document.querySelector('img');
 const card = document.querySelector('.card-header');
 
 const getData = () => {
   let unit = 'imperial';
 
   const fer = document.querySelector('.fer');
-  if (!fer.checked) {
-    unit = 'metric';
-  }
+    if (!fer.checked) {
+      unit = 'metric';
+    }
   
+  async function grabData() {
+    try {
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${input.value}&APPID=3c7d6427cc530acb8f1150c4ef40467d&units=${unit}`);
+      const data = await response.json();
+      getTemp(data);
+      getHiTemp(data);
+      getLoTemp(data);
+      getConditions(data);
+    } catch {
+      alert(`${input.value} is not a valid city`)
+    }
+  }
+  grabData();
+  /*
   fetch(`https://api.openweathermap.org/data/2.5/weather?q=${input.value}&APPID=3c7d6427cc530acb8f1150c4ef40467d&units=${unit}`)
     .then((response) => {
       return response.json()
@@ -20,18 +33,29 @@ const getData = () => {
       getLoTemp(response);
       getConditions(response);
     }).catch(err => alert(`${input.value} is not a valid city`))
-     
+    */ 
 }
 
-const getImage = (input) => {
+const getImage = async (input) => {
+  try {
+    const response = await fetch(('https://api.giphy.com/v1/gifs/translate?api_key=OkMu3nKncE7z53jpRPW5qhTT9C3qKqQl&s=' + input), { mode: 'cors' });
+    const data = await response.json();
+    card.style['background'] = `no-repeat center url(${data.data.images.original.url})`;
+  } catch {
+    card.style['background'] = 'white';
+  }
   
+
+  
+  /*
   fetch(('https://api.giphy.com/v1/gifs/translate?api_key=OkMu3nKncE7z53jpRPW5qhTT9C3qKqQl&s=' + input), { mode: 'cors' })
     .then((response) => {
       return response.json();
     })
     .then((response) => {
       card.style['background'] = `no-repeat center url(${response.data.images.original.url})`;
-    });
+    }).catch(card.style['background'] = 'white');
+    */
 }
 
 const getTemp = (x) => {
